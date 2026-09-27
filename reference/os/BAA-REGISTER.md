@@ -1,0 +1,40 @@
+# BAA Register — every vendor that touches client PHI
+
+> **This is the single source for "is this BAA-covered?"** STANDARDS.md §2, POSTURE.md and the Registry's HIPAA framework point here. A row reads **SIGNED** only when the signed record itself is named: where it lives and the date. Our own policy saying "covered" is not a record.
+>
+> Cut 2026-09-27 on JDM's order ("get ANY OTHER Google or Firestore or BQ or whatever BAA we need RIGHT NOW … Update our Systems and Documentation"). Measured the same day: the code's outbound call sites, josh@'s mailbox, the Legal-Docs folder and each vendor's own HIPAA page. Owner: MEGAZORD.
+
+## Status legend
+- **SIGNED**: the signed or accepted agreement is on record (location and date given).
+- **PENDING**: acceptance is in progress or requested. PHI must not newly flow until SIGNED.
+- **NONE**: no BAA exists. If PHI flows to it, that's an open exposure.
+- **REFUSES**: the vendor will not sign. PHI must not flow to it at all.
+
+## The register
+
+| Vendor / service | PHI flows today? (evidence) | BAA status | How it's obtained | Owner of the fix |
+|---|---|---|---|---|
+| **Google Workspace** (Gmail, Drive, Sheets, Docs, Meet) | Yes | **SIGNED 2026-02-04.** HIPAA Business Associate Amendment accepted in the Workspace Admin console → Account → Legal and Compliance (POSTURE.md §BAA Status and audit trail). | Done | — |
+| **Google Cloud** (Firestore, BigQuery, Cloud Run, Cloud Storage, Logging, Pub/Sub, Cloud Tasks, Speech-to-Text, Document AI, Secret Manager, Identity Platform, Vertex AI) | Yes. Firestore is the primary PHI store | **SIGNED 2026-09-27.** "Google Cloud Platform HIPAA Business Associate Addendum", accepted in the **Cloud** console → IAM & Admin → Privacy & Security (project claude-mcp-484718). The page reads "Reviewed and accepted on Sep 27, 2026 by Josh@retireprotected.com". Before/after screenshots: Drive `1ikjKRTFlwv4yy3IdRUIZQT5OHAcG6Fqm`. **Not accepted before this date.** PHI held in Firestore before 27 Sep sat outside a Cloud BAA. | Done | — |
+| **Gemini API** (`generativelanguage.googleapis.com`, API key) | **Possibly.** The workspace MCP's `transcribe_video` uploads files to it (`rpi-workspace-mcp/src/video-tools.js:24,129`). A client call or video transcribed there is PHI | **NONE.** Not on the Cloud BAA's covered-products list. Only Vertex AI is | Move `transcribe_video` to Vertex AI (covered). Until then, never run it on client media | MCP-Hub owner |
+| Firebase-branded services (Hosting, Cloud Messaging, Remote Config, App Distribution), Maps, reCAPTCHA | Not intended | Not covered | Keep PHI off them | — |
+| **Anthropic** (Claude API, Agent SDK, Claude Code) | **Yes, the largest flow.** MWM Medicare call transcripts (`atlas/mwm-referral-mine.ts:156,187`), client-document images extracting name, DOB and Medicare number (`atlas/super-tools/extract.ts:246,317-351`), call transcripts (`services/api/src/lib/ondemand-transcribe.ts:131-143`), client PDFs (`routes/casework-extract.ts:24`), coaching transcripts (`routes/coach-synthesis.ts`), mdj-agent SDK (`src/agent/voltron-sdk-client.ts:509`) | **NONE.** Requested by JDM 2026-07-25 (support@anthropic.com). Only the support bot replied (07-26). No acceptance and no Zero Data Retention on record. | Primary Owner accepts the standard BAA in the Claude Console ("cannot be disabled"), then Sales enables Zero Data Retention. Batch, Files, Code Execution, Computer Use and Web Fetch are excluded under the BAA | JDM (Primary Owner click) |
+| **Twilio** (voice, SMS, recordings) | **Yes.** SMS to clients (`routes/comms.ts:1136-1138`), recorded calls (`comms.ts:1534`), recordings stored at Twilio (`ondemand-transcribe.ts:55`) | **NONE** | Sales contract: Security or Enterprise Edition, then the BAA (twilio.com/en-us/hipaa) | JDM · TAIKO |
+| **Twilio SendGrid** | **Yes.** Voicemail mp3 forwarded by email, flagged as PHI in its own body (`routes/comms.ts:2380-2393`); call notices (`ivr-p3-routes.ts:131`) | **REFUSES.** "Twilio is not able to sign Business Associate Agreements for SendGrid" | None. **Stop the flow:** send these through Gmail (Workspace BAA) instead | TAIKO |
+| **HighLevel / GoHighLevel** (RPI account, TAG sub-account, MWM location) | **Yes.** Call recordings (`wires/wire-recording-ingest-mwm.ts`), contacts and notes (`wires/wire-ghl-sync.ts`), client texts in TAG's sub-account | **UNVERIFIED. Our records conflict:** "accepted directly (TAIKO, 2026-09-21)" in MUSASHI's email-system page vs "drafted, unsent … not executed" in tag-aep-campaign.md:1346 | Self-serve HIPAA add-on (US$297/mo, can't be disabled), signed in-app under Settings → Compliance, per account | TAIKO (verify) · JDM (purchase) |
+| **PostGrid** (direct mail) | **Yes.** AEP tier letters name the client and their Medicare plan status (`scripts/aep-postgrid-mail-run.py`, T1 "your Medicare Advantage plan is terminating", T4 PDP). DEX client kits (`routes/dex-pipeline.ts:925-1041`). The on-record "no PHI, no BAA" decision (`mdj-server-config/memory/project_taiko_lob_directmail.md:26`) rests on a premise these letters break | **NONE** | PostGrid offers a BAA. **Gate the live AEP mail run on it** | TAIKO · JDM |
+| **DocuSign** | **Yes.** DEX kits include MA, Med Supp and Part D (`packages/core/src/dex/rules.ts:32-34`). Name, email, phone and the kit PDF are sent (`dex-pipeline.ts:783-796,881`) | **NONE** | Sales (eligible plans) | JDM |
+| **Documo** (fax) | PII, borderline PHI. IFI packets carry insured name, DOB, policy number and premium (`scripts/ifi-packet-build.py`), sent via `scripts/ifi-fax-send.py`. Life-insurance fields only | NONE | Documo/mFax sells HIPAA fax with a BAA | TAIKO |
+| **Slack** | **Possibly, against policy.** Approval cards post `*Client:* ${entity_name}` with a "Medicare Account" button (`routes/approval.ts:212-231,271`; `lib/deep-links.ts:77-78`). Name plus "has Medicare" is arguably PHI, and STANDARDS §2 calls PHI in Slack a reportable breach | NONE (Enterprise Grid only) | **Strip the Medicare label from the card**, then keep Slack prohibited | MEGAZORD |
+| WAVV (dialer) | **No outbound flow from us.** We only download recordings (`atlas/super-tools/fetch-recording-audio-wavv.ts`), with a token and URL. The audio sits at WAVV as MWM's vendor | Partner-side question (MWM ↔ WAVV) | MWM's owner | — |
+| CSG Actuarial | Final-expense underwriting can send DOB + conditions + height/weight, no name (`routes/underwriting.ts:86-93,333,385`). Med Supp quotes: ZIP/age/gender/tobacco only | NONE | Ask CSG, or strip conditions before sending | MEGAZORD |
+| Carriers (Humana, Aetna, …), CMS Blue Button | Yes, but these are covered entities or government, not our vendors | Not a vendor BAA. Carriers may ask **us** to sign theirs | — | — |
+
+**No PHI flow (confirmed, code sweep 2026-09-27):** Whitepages, USPS, NeverBounce, Regrid, Gelato, WebinarKit, GitHub (private repos), OpenAI and Deepgram (no call sites), Humana/Aetna connectors (inbound only). **Not audited:** the rpi-healthcare MCP server, which lives outside both repos.
+
+**Past exposure, on record in our own code:** `scripts/notes-extract-api.mjs:4-11` says about 12,572 records went to Anthropic "before any BAA existed" (the script is paused). Firestore PHI before 2026-09-27 had no Cloud BAA.
+
+## Rules this register enforces
+1. A new vendor gets a row **before** any client data flows to it.
+2. "BAA-covered" anywhere else in our docs must match a **SIGNED** row here.
+3. A **REFUSES** row means the flow stops, whatever it costs.

@@ -62,7 +62,7 @@ RPI is both a **Covered Entity** (handles PHI as part of client service -- Medic
 
 - [x] Is RPI a "Covered Entity" under HIPAA? -- **Yes.**
 - [x] Is RPI a "Business Associate" of any Covered Entity? -- **Yes.**
-- [x] What Business Associate Agreements (BAAs) are required? -- **Google Workspace BAA signed Feb 4, 2026.**
+- [x] What Business Associate Agreements (BAAs) are required? -- **One per vendor that touches PHI. The full list, with status, is [BAA-REGISTER.md](BAA-REGISTER.md).** Google Workspace BAA signed Feb 4, 2026.
 - [x] Does Google Workspace meet HIPAA requirements? -- **Yes.** HIPAA-compliant with BAA in place.
 - [x] What training is required? -- **PHI Training deployed.** See Part 10.
 
@@ -608,11 +608,11 @@ function isOwner() {
 
 ### 2. PHI Handling — Permitted Surfaces
 
-PHI is ONLY permitted on BAA-covered surfaces. The BAA is signed with Google (covers Google Workspace and GCP). **Slack is NOT covered by the BAA.**
+PHI is ONLY permitted on BAA-covered surfaces. **What is covered, and by which signed agreement, lives in one place: [BAA-REGISTER.md](BAA-REGISTER.md).** Google Workspace's BAA was signed 2026-02-04. Google Cloud (Firestore, BigQuery, Cloud Run …) is a **separate** Google agreement, signed 2026-09-27 (not before). (Corrected 2026-09-27: this line used to say the Workspace BAA "covers Google Workspace and GCP", which no signed record supported.) **Slack is NOT covered by the BAA.**
 
 | Surface | PHI Permitted | Notes |
 |---|---|---|
-| Firestore (Native mode) | **Yes** | Primary PHI store. BAA-covered. |
+| Firestore (Native mode) | **Yes** | Primary PHI store. Covered by the Google Cloud BAA (see register). |
 | Google Workspace (Drive, Sheets, Docs) | **Yes** | BAA-covered. |
 | Cloud Run logs | **No** | Never log PHI — hook-enforced (`block-phi-in-logs`). |
 | Slack (any channel or DM) | **No** | Not in BAA. Routing PHI to Slack is a reportable breach. |

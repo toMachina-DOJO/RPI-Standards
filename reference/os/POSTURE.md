@@ -149,9 +149,14 @@ These are the email addresses referenced on the retireprotected.com legal pages 
 ## Part 4: HIPAA Status
 
 ### BAA Status
+
+**Every vendor, with its status, is in [BAA-REGISTER.md](BAA-REGISTER.md).** That's the only place a BAA counts as on record.
+
 - [x] BAA signed with Google Workspace
 - [x] Date signed: February 4, 2026
 - [x] Location of signed BAA: Google Admin Console -> Account -> Legal and Compliance
+- [x] **Google Cloud BAA** (Firestore, BigQuery, Cloud Run …) signed **2026-09-27**: "Reviewed and accepted on Sep 27, 2026 by Josh@retireprotected.com", Cloud console -> IAM & Admin -> Privacy & Security (project claude-mcp-484718). A separate agreement from the Workspace BAA, and **not accepted before this date**.
+- [ ] **Non-Google vendors carrying PHI with no BAA** (2026-09-27 sweep): Anthropic, Twilio, PostGrid, DocuSign, and GoHighLevel (records conflict). SendGrid refuses to sign, so its PHI flow must stop. Actions and owners are in the register.
 
 For PHI handling policies, see [STANDARDS.md](STANDARDS.md).
 
