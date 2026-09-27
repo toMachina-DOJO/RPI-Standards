@@ -53,7 +53,7 @@
 | Email authentication (SPF/DKIM/DMARC) | Configured | [x] | 2026-03-19 |
 | Mobile device management | Basic or higher | [x] | 2026-02-13 |
 | Admin roles | Principle of least privilege | [x] | 2026-02-13 |
-| BAA with Google | Signed (if handling PHI) | [x] | 2026-02-04 |
+| BAA with Google | Signed (if handling PHI) | [x] | Workspace 2026-02-04 · Cloud 2026-09-27 (BAA-REGISTER.md) |
 
 ### Application Security
 
@@ -155,7 +155,7 @@ These are the email addresses referenced on the retireprotected.com legal pages 
 - [x] BAA signed with Google Workspace
 - [x] Date signed: February 4, 2026
 - [x] Location of signed BAA: Google Admin Console -> Account -> Legal and Compliance
-- [x] **Google Cloud BAA** (Firestore, BigQuery, Cloud Run …) signed **2026-09-27**: "Reviewed and accepted on Sep 27, 2026 by Josh@retireprotected.com", Cloud console -> IAM & Admin -> Privacy & Security (project claude-mcp-484718). A separate agreement from the Workspace BAA, and **not accepted before this date**.
+- [x] **Google Cloud BAA** (Firestore, BigQuery, Cloud Run …) signed **2026-09-27**: "Reviewed and accepted on Sep 27, 2026 by Josh@retireprotected.com", Cloud console -> IAM & Admin -> Privacy & Security (project claude-mcp-484718). A separate agreement from the Workspace BAA, and **not accepted before this date**. **BBP2-015** (Blue Button Phase II, toMachina#5265): this line is the durable record that Gate **G0a** (Google Cloud BAA accepted) checks against, and G0a is **met** on it. Source: SHINOB1's report and the Cloud console readback quoted above, both 2026-09-27; the full row, with the before and after screenshots, is in [BAA-REGISTER.md](BAA-REGISTER.md). G0a covers the BAA only. Gate G0c (CMS clearing the "Google Cloud" wording in the Blue Button policy) is separate and **still open**.
 - [ ] **Non-Google vendors carrying PHI with no BAA** (2026-09-27 sweep): Anthropic, Twilio, PostGrid, DocuSign, and GoHighLevel (records conflict). SendGrid refuses to sign, so its PHI flow must stop. Actions and owners are in the register.
 
 For PHI handling policies, see [STANDARDS.md](STANDARDS.md).
@@ -404,7 +404,7 @@ Live ruleset: **fc981d23** (post-`chat_oauth`, PR #1842). `isHubAdmin()` / `isPa
 **Why now:** RPI is now a **multi-tenant custodian of partner firms' credentials AND their clients' PHI**. That is an elevated regulatory weight class — HIPAA is the spine of this section, not a footnote.
 
 **BAA chain (document + verify each link):**
-- `RPI → Google`: **SIGNED 2026-02-04** (covers Workspace + GCP HIPAA-eligible: Firestore, STT, Vertex, BQ). PHI-to-Google = cleared. On-box at `reference/os/STANDARDS.md` + `POSTURE.md`.
+- `RPI → Google`: **two agreements.** The Workspace BAA was signed **2026-02-04**. The Google Cloud BAA (Firestore, STT, Vertex, BQ …) was accepted **2026-09-27** and **not before**, so PHI held in GCP before that date sat outside a Cloud BAA. *Corrected 2026-09-27: this line used to credit the Feb date with covering GCP too. No record supported that.* The Gemini API is **not** covered by either agreement. The record for both is [BAA-REGISTER.md](BAA-REGISTER.md).
 - `Partner → RPI`: **NEW link, must be papered.** As custodian of a partner's clients' PHI, RPI is a Business Associate of the partner (or the partner is a covered client under our BAA umbrella). **Flag as REQUIRED-verify before any partner's PHI lands** — JDM/legal item, not assert-done.
 
 **Tenant isolation = a DOCUMENTED HIPAA technical safeguard** (write it down as such, not just as a rule):
