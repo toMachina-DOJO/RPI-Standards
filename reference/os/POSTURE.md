@@ -156,7 +156,7 @@ These are the email addresses referenced on the retireprotected.com legal pages 
 - [x] Date signed: February 4, 2026
 - [x] Location of signed BAA: Google Admin Console -> Account -> Legal and Compliance
 - [x] **Google Cloud BAA** (Firestore, BigQuery, Cloud Run …) signed **2026-09-27**: "Reviewed and accepted on Sep 27, 2026 by Josh@retireprotected.com", Cloud console -> IAM & Admin -> Privacy & Security (project claude-mcp-484718). A separate agreement from the Workspace BAA, and **not accepted before this date**. **BBP2-015** (Blue Button Phase II, toMachina#5265): this line is the durable record that Gate **G0a** (Google Cloud BAA accepted) checks against, and G0a is **met** on it. Source: SHINOB1's report and the Cloud console readback quoted above, both 2026-09-27; the full row, with the before and after screenshots, is in [BAA-REGISTER.md](BAA-REGISTER.md). G0a covers the BAA only. Gate G0c (CMS clearing the "Google Cloud" wording in the Blue Button policy) is separate and **still open**.
-- [ ] **Non-Google vendors carrying PHI with no BAA** (2026-09-27 sweep): Anthropic, Twilio, PostGrid, DocuSign, and GoHighLevel (records conflict). SendGrid refuses to sign, so its PHI flow must stop. Actions and owners are in the register.
+- [ ] **Non-Google vendors carrying PHI with no BAA** (2026-09-27 sweep): Anthropic, Twilio, DocuSign, and GoHighLevel (no HIPAA package on RPI's agency). PostGrid's AEP letters are not PHI (JDM's ruling, 2026-09-28). SendGrid refuses to sign, so its PHI flow must stop. Actions and owners are in the register.
 
 For PHI handling policies, see [STANDARDS.md](STANDARDS.md).
 
