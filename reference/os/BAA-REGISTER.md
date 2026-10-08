@@ -1,0 +1,1 @@
+MOVED 2026-09-28: this file lives in toMachina at docs/compliance/BAA-REGISTER.md (/home/jdm/Projects/toMachina/docs/compliance/BAA-REGISTER.md, served at https://mdjserver.tail7845ea.ts.net:8443/inbox/repo-docs/compliance/BAA-REGISTER.md). Edit it there, by PR. (tM#5304)
